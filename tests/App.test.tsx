@@ -1,7 +1,7 @@
 import { render,fireEvent  } from '@testing-library/react';
 // import { describe, it, expect,test } from 'vitest';
 import '@testing-library/jest-dom'
-import App from '../src/App';
+import App from '../src/app/App';
 
 test('renders Vite + React heading', () => {
   const { getByText } = render(<App />)
