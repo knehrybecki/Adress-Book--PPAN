@@ -5,3 +5,7 @@ export enum HttpMethod {
   PUT = 'put',
   DELETE = 'delete',
 }
+
+export enum pathConnect {
+  checkConnect = '/checkConnect',
+}

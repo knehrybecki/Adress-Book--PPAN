@@ -3,25 +3,29 @@ import styled from 'styled-components'
 import PuffLoader from 'react-spinners/PuffLoader'
 import { useEffect, useRef, useState } from 'react'
 import { useFetch } from '../../lib/hooks/UseFetch'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../lib/reducers'
+import { StatusServer } from '../../lib/types'
 
 export const Welcome = () => {
   const { checkConnectToServer } = useFetch()
-  const wasCalled = useRef(false)
-  const [statusServer, setStatusServer] = useState('')
-  const [colorLoading, setColorLoading] = useState('#000')
-  const [isError, setIsError] = useState(false)
-  const [codeError, setCodeError] = useState('')
+  const wasCalled = useRef<boolean>(false)
+  const { SET_STATUS_SERVER, SERVER_OK, SERVER_ERROR, SERVER_RECONNECT } =
+    StatusServer
+
+  const welcome = useSelector((state: RootState) => state.welcome)
+  const { codeError, colorloading, isError, statusServer } = welcome
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (wasCalled.current) return
     wasCalled.current = true
+
     const wait = setTimeout(() => {
       checkConnectToServer().then((data) => {
-        setStatusServer(data.status)
-
+        dispatch({ type: SET_STATUS_SERVER, payload: data.status })
         if (data.errMessage) {
-          setIsError(true)
-          setCodeError(data.errMessage)
+          dispatch({ type: SERVER_ERROR, payload: data.errMessage })
           return
         }
       })
@@ -31,29 +35,29 @@ export const Welcome = () => {
 
   useEffect(() => {
     if (statusServer === 'Good') {
-      setColorLoading('#0dff00')
+      dispatch({ type: SERVER_OK })
       setTimeout(() => {
         location.pathname = '/login'
       }, 500)
     }
 
     if (statusServer === 'Bad') {
-      setColorLoading('#ff0000')
+      dispatch({ type: SERVER_ERROR })
     }
   }, [statusServer])
 
   const reconnect = () => {
     const reconnect = setInterval(() => {
       checkConnectToServer().then((data) => {
-        setStatusServer(data.status)
+        dispatch({ type: SET_STATUS_SERVER, payload: data.status })
 
         if (data.errMessage) {
-          setIsError(true)
-          setCodeError(data.errMessage)
+          dispatch({ type: SERVER_ERROR, payload: data.errMessage })
           return
         }
-        setIsError(false)
+        dispatch({ type: SERVER_RECONNECT })
         clearInterval(reconnect)
+
         if (!isError) {
           location.pathname = '/login'
         }
@@ -66,7 +70,7 @@ export const Welcome = () => {
       <Container>
         <Img src={Images.logoPpan} alt='Piotruś Pan Logo' />
         <PuffLoader
-          color={colorLoading}
+          color={colorloading}
           cssOverride={{}}
           size={100}
           speedMultiplier={0.5}
