@@ -1,4 +1,4 @@
-import { HomeHeader, HomeSide } from '../../lib/components';
+import { HomeHeader, HomeSide } from '../../lib/components'
 
 export const LayoutHome = () => {
   return (
@@ -6,5 +6,5 @@ export const LayoutHome = () => {
       <HomeHeader />
       <HomeSide />
     </>
-  );
-};
+  )
+}

@@ -1,5 +1,7 @@
 export type AppTheme = {
-  homePage: null
+  LoadApp: {
+    Background: string
+  }
   media: {
     xs: number
     sm: number

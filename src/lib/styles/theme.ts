@@ -1,7 +1,9 @@
 import { AppTheme } from 'lib/types'
 
 export const theme: AppTheme = {
-  homePage: null,
+  LoadApp: {
+    Background: '#fff',
+  },
   media: {
     xs: 550,
     sm: 768,
