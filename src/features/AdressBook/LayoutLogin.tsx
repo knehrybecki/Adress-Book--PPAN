@@ -1,7 +1,7 @@
-export const LayoutHome = () => {
+export const LayoutLogin = () => {
   return (
     <>
-      <Welcome />
+      <div>asd</div>
     </>
   )
 }
