@@ -1,7 +1,7 @@
-import { render,fireEvent  } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react'
 // import { describe, it, expect,test } from 'vitest';
 import '@testing-library/jest-dom'
-import App from '../src/app/App';
+import { App } from '../src/app/App'
 
 test('renders Vite + React heading', () => {
   const { getByText } = render(<App />)
@@ -36,6 +36,8 @@ test('renders edit src/App.tsx message', () => {
 
 test('renders read-the-docs message', () => {
   const { getByText } = render(<App />)
-  const readTheDocsMessage = getByText(/Click on the Vite and React logos to learn more/i)
+  const readTheDocsMessage = getByText(
+    /Click on the Vite and React logos to learn more/i
+  )
   expect(readTheDocsMessage).toBeInTheDocument()
 })

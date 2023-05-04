@@ -22,6 +22,8 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
+  height: 100vh;
+  width: 100vw;
 }
 polygon {
   stroke-width: 0.3;
@@ -30,10 +32,10 @@ polygon {
 animate {
   animation-duration: 5s;
 }
-/* @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #fff;
+    background-color: #1f1f1f;
   }
   a:hover {
     color: #747bff;
@@ -41,4 +43,9 @@ animate {
   button {
     background-color: #f9f9f9;
   }
-} */
+  input {
+    background-color: #fff;
+    color: #fff;
+    border-color: #c0c0c0;
+  }
+}

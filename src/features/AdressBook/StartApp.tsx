@@ -1,5 +1,10 @@
-import { Welcome } from '../../lib/components/Welcome'
+import { Dictionary, welcomeType } from '../../lib/types'
+import { Outlet } from 'react-router'
 
-export const StartApp = () => {
-  return <Welcome />
+export type StartAppProps = {
+  T: Dictionary
+}
+
+export const StartApp: React.FunctionComponent<StartAppProps> = ({ T }) => {
+  return <Outlet />
 }

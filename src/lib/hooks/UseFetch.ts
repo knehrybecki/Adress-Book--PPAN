@@ -1,8 +1,9 @@
-import axios, { AxiosResponse } from 'axios'
-import { RoutePath } from '../../lib/config'
-import { pathConnect } from '../../lib/types'
+import axios from 'axios'
+import { pathConnect, StatusCheck } from '../../lib/types'
 
 export const useFetch = () => {
+  const { Bad, NotConnectedDB } = StatusCheck
+
   const { checkConnect } = pathConnect
   const BaseUrl: string = import.meta.env.VITE_BASE_URL
 
@@ -10,16 +11,44 @@ export const useFetch = () => {
     return await axios
       .get(`${BaseUrl}${checkConnect}`)
       .then((res) => {
-        return res.data
+        const statusServer: string = res.data.statusServer
+        const statusDB: string = res.data.statusDB
+
+        if (statusDB === Bad) {
+          throw Error
+        }
+
+        return { statusServer, statusDB }
       })
+
       .catch((err) => {
         console.log(err)
-        const status = 'Bad'
+        const status = Bad
         const errMessage: string = err.code
+
+        if (!errMessage) {
+          throw Error
+        }
 
         return { status, errMessage }
       })
+      .catch(() => {
+        const errMessage = NotConnectedDB
+
+        return { errMessage }
+      })
   }
 
-  return { checkConnectToServer }
+  const login = async () => {
+    return await axios
+      .post(`${BaseUrl}/login`, {
+        username: 'admin',
+        password: 'admin',
+      })
+      .then((res) => {
+        console.log(res.data)
+      })
+  }
+
+  return { checkConnectToServer, login }
 }
