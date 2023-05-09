@@ -1,4 +1,7 @@
 export const RoutePath = {
   home: '/',
-  login: '/login',
+  loginPath: '/login',
+  adressBook: '/AdressBook',
+  checkUser: '/checkUser',
+  checkConnect: '/checkConnect',
 }

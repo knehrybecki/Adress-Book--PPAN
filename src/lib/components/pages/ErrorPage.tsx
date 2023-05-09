@@ -1,6 +1,10 @@
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 export const ErrorPage = () => {
+  const getStatusServer = sessionStorage.getItem('StatusServer')
+  const statusServer = sessionStorage.getItem('StatusServer')
+
   return (
     <Container>
       <ErrorPages>Page not Found !</ErrorPages>

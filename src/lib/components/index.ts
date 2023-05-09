@@ -1,3 +1,6 @@
+export { LoginFooter } from './LoginFooter'
+export { SideComponent } from './SideComponent'
+export { Contacts } from './Contacts'
 export { LoginHeader } from './LoginHeader'
 export { HomeHeader } from './HomeHeader'
 export { HomeSide } from './HomeSide'

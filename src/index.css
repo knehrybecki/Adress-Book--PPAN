@@ -32,7 +32,7 @@ polygon {
 animate {
   animation-duration: 5s;
 }
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     color: #fff;
     background-color: #1f1f1f;
@@ -48,4 +48,4 @@ animate {
     color: #fff;
     border-color: #c0c0c0;
   }
-}
+} */

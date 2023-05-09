@@ -1,5 +1,5 @@
-import { Dictionary } from '../../lib/types'
-import { Images } from '../../assets'
+import { Dictionary } from 'lib/types'
+import { Images } from 'assets'
 import styled from 'styled-components'
 
 export type LoginHeaderProps = {
@@ -9,11 +9,13 @@ export type LoginHeaderProps = {
 export const LoginHeader: React.FunctionComponent<LoginHeaderProps> = ({
   T,
 }) => {
+  const { loginPage } = T
+
   return (
     <Container>
       <Header>
         <Img src={Images.logoPpan} alt='Piotruś Pan Logo' />
-        <Title>Książka Adresowa</Title>
+        <Title>{loginPage.HeaderTitle}</Title>
       </Header>
     </Container>
   )
@@ -27,7 +29,7 @@ const Container = styled.div`
 `
 const Header = styled.div`
   height: 120px;
-  background-color: #e30613;
+  background-color: ${({ theme }) => theme.header.backgroundHeader};
   width: 100%;
   display: flex;
   align-items: center;
@@ -38,13 +40,14 @@ const Header = styled.div`
   }
 `
 const Title = styled.div`
-  color: #fff;
+  color: ${({ theme }) => theme.header.colorHeader};
   font-weight: 500;
-  font-size: 28px;
+  font-size: ${({ theme }) => theme.title.fontSize};
   text-align: center;
   position: absolute;
   margin: 0 auto;
   width: 100%;
+
   @media (max-width: ${({ theme }) => theme.media.sm}px) {
     margin-top: 10px;
     position: relative;

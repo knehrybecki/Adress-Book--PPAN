@@ -1,12 +1,12 @@
-import { Images } from '../../assets'
+import { Images } from 'assets'
 import styled from 'styled-components'
 import PuffLoader from 'react-spinners/PuffLoader'
 import { useEffect, useRef } from 'react'
-import { useFetch } from '../../lib/hooks/UseFetch'
+import { useFetch } from 'lib/hooks/UseFetch'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { StatusServer, StatusCheck, Dictionary } from '../../lib/types'
-import { RoutePath } from '../../lib/config'
+import { StatusServer, StatusCheck, Dictionary } from 'lib/types'
+import { RoutePath } from 'lib/config'
 
 import { RootState } from 'lib/reducers'
 
@@ -61,9 +61,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
     if (statusServer === Good && statusDB === Good) {
       dispatch({ type: SERVER_OK })
       setTimeout(() => {
-        location.href = RoutePath.login
-        // return <Navigate to={`/login`} />
-        // location.pathname = RoutePath.login
+        location.pathname = RoutePath.loginPath
       }, 1000)
     }
     if (statusServer === Good && statusDB === Bad) {
@@ -101,7 +99,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
         clearInterval(reconnect)
 
         if (!isError) {
-          // location.pathname = RoutePath.login
+          location.pathname = RoutePath.loginPath
         }
       })
     }, 1000)
@@ -133,7 +131,6 @@ const WelcomeContainer = styled.div`
   width: 100%;
   height: 100%;
   position: absolute;
-  /* background-color: ${({ theme }) => theme.LoadApp.Background}; */
 `
 const Container = styled.div`
   position: relative;
@@ -155,7 +152,7 @@ const Container = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 25px;
+  font-size: ${({ theme }) => theme.title.fontSize};
   font-weight: 500;
   margin-bottom: 50px;
 `

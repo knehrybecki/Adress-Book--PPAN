@@ -29,6 +29,7 @@ export const welcomeReducer = createReducer(
     })
     builder.addCase(ServerOK, (state) => {
       state.colorloading = '#0dff00'
+      sessionStorage.setItem('StatusServer', 'Good')
     })
     builder.addCase(ServerError, (state, action) => {
       state.isError = true
