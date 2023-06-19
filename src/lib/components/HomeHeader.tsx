@@ -1,20 +1,21 @@
 import { Images } from 'assets'
-import { PL_pl } from 'lib/locale'
+import { RootState } from 'lib/reducers'
+
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
-export const HomeHeader = () => {
-  const T = PL_pl
-  const { loginPage } = T
+enum altImg {
+  logo = 'Piotruś Pan Logo',
+}
 
-  const ChangeTitle = () => {
-    // switch (location.pathname)
-  }
+export const HomeHeader = () => {
+  const { nameSelected } = useSelector((state: RootState) => state.side)
 
   return (
     <Container>
       <Header>
-        <Img src={Images.logoPpan} alt='Piotruś Pan Logo' />
-        <Title>{loginPage.HeaderTitle}</Title>
+        <Img src={Images.logoPpan} alt={altImg.logo} />
+        <Title>{nameSelected}</Title>
       </Header>
     </Container>
   )
@@ -27,7 +28,7 @@ const Container = styled.div`
   position: relative;
 `
 const Header = styled.div`
-  height: 70px;
+  height: 65px;
   background-color: ${({ theme }) => theme.header.backgroundHeader};
   width: 100%;
   display: flex;
@@ -38,7 +39,7 @@ const Header = styled.div`
     justify-content: center;
   }
 `
-const Title = styled.div`
+const Title = styled.h1`
   color: ${({ theme }) => theme.header.colorHeader};
   font-weight: 500;
   font-size: ${({ theme }) => theme.title.fontSize};

@@ -24,7 +24,7 @@ export const theme: AppTheme = {
     copyrightFont: '10px',
   },
   sideBox: {
-    borderColor: '#A8A8A8',
+    borderColor: 'rgb(241 241 241)',
     title: {
       fontSize: '22px',
       color: '#696969',

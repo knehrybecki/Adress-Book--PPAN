@@ -16,7 +16,8 @@ type WelcomeProps = {
 
 export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
   const wasCalled = useRef<boolean>(false)
-  const welcome = useSelector((state: RootState) => state.welcome)
+  const { codeError, colorloading, isError, statusServer, statusDB } =
+    useSelector((state: RootState) => state.welcome)
 
   const dispatch = useDispatch()
 
@@ -25,8 +26,6 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
   const { Bad, Good, errMessageTS, statusDBTS, statusServerTS } = StatusCheck
   const { SET_STATUS_SERVER, SERVER_OK, SERVER_ERROR, SERVER_RECONNECT } =
     StatusServer
-
-  const { codeError, colorloading, isError, statusServer, statusDB } = welcome
 
   useEffect(() => {
     if (wasCalled.current) return
@@ -61,7 +60,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
     if (statusServer === Good && statusDB === Good) {
       dispatch({ type: SERVER_OK })
       setTimeout(() => {
-        location.pathname = RoutePath.loginPath
+        location.pathname = RoutePath.loginRoute
       }, 1000)
     }
     if (statusServer === Good && statusDB === Bad) {
@@ -99,7 +98,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
         clearInterval(reconnect)
 
         if (!isError) {
-          location.pathname = RoutePath.loginPath
+          location.pathname = RoutePath.loginRoute
         }
       })
     }, 1000)
@@ -110,12 +109,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
       <Container>
         <Img src={Images.logoPpan} alt='Piotruś Pan Logo' />
         <Title>{T.welcome.title}</Title>
-        <PuffLoader
-          color={colorloading}
-          cssOverride={{}}
-          size={100}
-          speedMultiplier={0.5}
-        />
+        <PuffLoader color={colorloading} size={100} speedMultiplier={0.5} />
         <Error>{isError ? codeError : ''}</Error>
         <> {isError && reconnect()}</>
       </Container>

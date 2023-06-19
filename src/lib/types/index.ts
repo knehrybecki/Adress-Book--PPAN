@@ -1,3 +1,5 @@
+export type { ContactType } from './contact'
+export { HomeReducerTypes } from './home'
 export { FetchTypes } from 'lib/types/actions'
 export { LoginTypes } from './login'
 export type { FetchLogin } from './login'
@@ -17,3 +19,6 @@ export type { welcomeType } from './welcomeTypes'
 
 export type { AppTheme } from './types'
 export { SessionType } from './sessionStorage'
+export { GroupReducerTypes } from './groups'
+export { GroupReducerPayload } from './groups'
+export type { Contacts } from './contact'

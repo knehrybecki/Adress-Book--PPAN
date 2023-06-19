@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 
-export const HomeSide = ({ children }) => {
+type HomeSideProps = {
+  children: React.ReactNode
+}
+
+export const HomeSide = ({ children }: HomeSideProps) => {
   return (
     <Container>
       <>{children}</>

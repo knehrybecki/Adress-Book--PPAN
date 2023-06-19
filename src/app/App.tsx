@@ -12,13 +12,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { useFetch } from 'lib/hooks'
 import { LoginTypes, SessionType } from 'lib/types'
-import { Contacts } from 'lib/components'
+
+import { AllContacts, CreateContact, PreviewContact } from 'lib/components'
 
 export const App = () => {
-  const { home, loginPath, adressBook } = RoutePath
+  const { home, loginRoute, adressBookRoute } = RoutePath
   const T = PL_pl
-  const logins = useSelector((state: RootState) => state.login)
-  const { logged } = logins
+  const { logged } = useSelector((state: RootState) => state.login)
+
   const { GetkUserFromServ } = useFetch()
   const dispatch = useDispatch()
   const { Unauthorized, LOGGED } = LoginTypes
@@ -26,6 +27,7 @@ export const App = () => {
 
   const getStatusServer = sessionStorage.getItem(StatusServerSession)
   const getLoggedUser = sessionStorage.getItem(loggedSession)
+
   useEffect(() => {
     GetkUserFromServ()
       .then((res) => {
@@ -37,8 +39,8 @@ export const App = () => {
           sessionStorage.setItem(loggedSession, res)
           dispatch({ type: LOGGED, payload: res })
 
-          if (location.pathname === adressBook) return
-          location.pathname = adressBook
+          // if (location.pathname === adressBook) return
+          // location.pathname = adressBook
         }
       })
       .catch((err) => {
@@ -60,25 +62,17 @@ export const App = () => {
           }
 
           if (getStatusServer) {
-            if (location.pathname === loginPath) {
+            if (location.pathname === loginRoute) {
               return
             }
 
-            location.pathname = loginPath
+            location.pathname = loginRoute
           }
         }
       })
-  }, [
-    GetkUserFromServ,
-    LOGGED,
-    Unauthorized,
-    adressBook,
-    dispatch,
-    getStatusServer,
-    home,
-    loggedSession,
-    loginPath,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // useEffect(() => {
 
   //   if (getLogged) {
@@ -95,16 +89,29 @@ export const App = () => {
           <Route path={home} element={<StartApp />}>
             <Route index element={<Welcome T={T} />} />
           </Route>
-          {!logged && (
-            <Route path={loginPath} element={<LayoutLogin T={T} />}>
-              <Route index element={<Login T={T} />} />
-            </Route>
-          )}
-          {getLoggedUser && (
-            <Route path={adressBook} element={<LayoutHome />}>
-              <Route index element={<Contacts />} />
-            </Route>
-          )}
+
+          <Route path={loginRoute} element={<LayoutLogin T={T} />}>
+            <Route index element={<Login T={T} />} />
+          </Route>
+
+          <Route path={adressBookRoute} element={<LayoutHome />}>
+            {/* <Route index element={<AdressBook />} /> */}
+            <Route
+              path='/adress-book/create-contact'
+              element={<CreateContact />}
+            />
+            <Route path='/adress-book' element={<AllContacts />} />
+            <Route path='/adress-book/kosz' element={<AllContacts />} />
+            <Route path='/adress-book/:id' element={<AllContacts />} />
+            <Route
+              path='/adress-book/person/:id'
+              element={<PreviewContact />}
+            />
+          </Route>
+          {/* <Route path='/AdressBook/kosz' element={<LayoutHome />}> */}
+
+          {/* </Route> */}
+
           <Route path='*' element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>

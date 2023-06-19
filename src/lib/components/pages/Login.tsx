@@ -143,11 +143,17 @@ const ButtonLogin = styled.button`
   cursor: pointer;
   text-align: center;
   font-weight: 600;
+  :hover {
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #000;
+  }
 `
 
 const InputError = styled.div`
   font-size: 12px;
   margin-left: 20px;
+  position: absolute;
 `
 const MessageError = styled.div`
   position: absolute;

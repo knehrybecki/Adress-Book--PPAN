@@ -1,4 +1,10 @@
-import { HomeHeader, HomeSide, SideComponent } from 'lib/components'
+import {
+  HomeContacts,
+  HomeHeader,
+  HomeSide,
+  SideComponent,
+} from 'lib/components'
+
 import { Outlet } from 'react-router'
 
 export const LayoutHome = () => {
@@ -7,7 +13,9 @@ export const LayoutHome = () => {
       <HomeHeader />
       <HomeSide>
         <SideComponent />
-        <Outlet />
+        <HomeContacts>
+          <Outlet />
+        </HomeContacts>
       </HomeSide>
     </>
   )

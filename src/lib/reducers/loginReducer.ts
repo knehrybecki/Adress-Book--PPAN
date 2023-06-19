@@ -32,6 +32,7 @@ const inputErrorEmail = createAction<inputError>('INPUT_ERROR_EMAIL')
 const inputErrorPassword = createAction<inputError>('INPUT_ERROR_PASSWORD')
 const inputValueEmail = createAction<string>('INPUT_VALUE_EMAIL')
 const inputValuePassword = createAction<string>('INPUT_VALUE_PASSWORD')
+const inputFetchError = createAction<string>('INPUT_ERROR')
 
 const setLogged = createAction<boolean>('SET_LOGGED')
 
@@ -65,5 +66,9 @@ export const loginReducer = createReducer(INITIAL_STATE_LOGIN, (builder) => {
   })
   builder.addCase(setLogged, (state, action) => {
     state.logged = action.payload
+  })
+  builder.addCase(inputFetchError, (state, action) => {
+    state.user.isInputError = true
+    state.password.isInputError = true
   })
 })

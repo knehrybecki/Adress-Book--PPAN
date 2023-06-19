@@ -1,10 +1,12 @@
 import axios from 'axios'
-import { RoutePath } from 'lib/config'
+import { FetchPath, RoutePath } from 'lib/config/config'
 import {
   StatusCheck,
   ErrorFromServer,
   FetchTypes,
   SessionType,
+  GroupReducerTypes,
+  ContactType,
 } from 'lib/types'
 import { FetchLogin, LoginTypes } from 'lib/types/login'
 import { useDispatch } from 'react-redux'
@@ -14,9 +16,30 @@ export const useFetch = () => {
 
   const { Bad, NotConnectedDB } = StatusCheck
   const { LOGGED } = LoginTypes
-  const { FETCH_END, FETCH_ERROR_SERVER, FETCH_START } = FetchTypes
+  const { FETCH_END, FETCH_ERROR_SERVER, FETCH_START, INPUT_ERROR } = FetchTypes
   const { tokenSession } = SessionType
-  const { adressBook, loginPath, checkConnect, checkUser } = RoutePath
+  const {
+    INPUT_ERROR_GROUP,
+    FLASH_SUCCESS_TEXT,
+    FLASH_ERROR_TEXT,
+    HAS_ERROR,
+    GROUPS,
+    CONTACTS,
+  } = GroupReducerTypes
+  const { IS_VISIBLE } = GroupReducerTypes
+  const {
+    loginPath,
+    checkConnect,
+    checkUser,
+    createGroup,
+    AllGroups,
+    saveContactPath,
+    allContacts,
+    AllContactsTrash,
+    deleteContact,
+  } = FetchPath
+
+  const { adressBookRoute, loginRoute } = RoutePath
 
   const getToken = sessionStorage.getItem(tokenSession)
 
@@ -31,7 +54,6 @@ export const useFetch = () => {
         },
       })
       .then((res) => {
-        console.log(res)
         const statusServer: string = res.data.statusServer
         const statusDB: string = res.data.statusDB
 
@@ -76,14 +98,14 @@ export const useFetch = () => {
       .then((res: FetchLogin) => {
         if (res.data.error) {
           dispatch({ type: FETCH_ERROR_SERVER, payload: res.data.error })
-
+          dispatch({ type: INPUT_ERROR })
           return
         }
 
         if (res.data.token) {
           dispatch({ type: LOGGED, payload: true })
           sessionStorage.setItem(tokenSession, res.data.token)
-          location.pathname = adressBook
+          location.pathname = adressBookRoute
         }
       })
       .catch((err) => {
@@ -98,12 +120,13 @@ export const useFetch = () => {
       })
   }
 
-  const GetkUserFromServ = () => {
+  const GetkUserFromServ = async () => {
     const { loggedSession, StatusServerSession } = SessionType
     const getStatusServer = sessionStorage.getItem(StatusServerSession)
-    const { home, loginPath } = RoutePath
+    const { home } = FetchPath
     const { Unauthorized, LOGGED } = LoginTypes
-    return axios
+
+    return await axios
       .get(`${BaseUrl}${checkUser}`, {
         headers: {
           Authorization: getToken,
@@ -127,7 +150,7 @@ export const useFetch = () => {
           sessionStorage.removeItem(loggedSession)
 
           if (!getStatusServer) {
-            if (location.pathname === loginPath) return
+            if (location.pathname === loginRoute) return
             if (location.pathname === home) {
               return
             }
@@ -136,14 +159,320 @@ export const useFetch = () => {
           }
 
           if (getStatusServer) {
-            if (location.pathname === loginPath) {
+            if (location.pathname === loginRoute) {
               return
             }
 
-            location.pathname = loginPath
+            location.pathname = loginRoute
           }
         }
       })
   }
-  return { checkConnectToServer, login, GetkUserFromServ }
+
+  const editGroupFetch = async (
+    id: string,
+    oldName: string,
+    newName: string
+  ) => {
+    return await axios
+      .put(`${BaseUrl}${AllGroups}/${id}`, {
+        newName: newName,
+        oldName: oldName,
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({ type: HAS_ERROR, payload: false })
+        dispatch({ type: FLASH_SUCCESS_TEXT, payload: res.data.message })
+      })
+      .catch((err) => {
+        console.log(err)
+        dispatch({ type: HAS_ERROR, payload: true })
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({
+          type: INPUT_ERROR_GROUP,
+          payload: err.response.data.message,
+        })
+      })
+  }
+
+  const createGroupFetch = (nameGroup: string) => {
+    return axios
+      .post(`${BaseUrl}${createGroup}`, {
+        name: nameGroup,
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        if (res.data.error) {
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_ERROR_TEXT, payload: res.data.error })
+          dispatch({ type: HAS_ERROR, payload: true })
+          dispatch({
+            type: INPUT_ERROR_GROUP,
+            payload: res.data.error,
+          })
+          return true
+        }
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({ type: HAS_ERROR, payload: false })
+        dispatch({ type: FLASH_SUCCESS_TEXT, payload: res.data.message })
+      })
+      .catch((err) => {
+        console.log(err)
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({ type: HAS_ERROR, payload: true })
+        dispatch({
+          type: FLASH_ERROR_TEXT,
+          payload: err.response.data.message,
+        })
+      })
+  }
+  const getAllGroups = async () => {
+    return await axios
+      .get(`${BaseUrl}${AllGroups}`, {
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        const data = res.data as { id: number; name: string }[]
+        if (data) {
+          return data
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  const deleteGroupFromServer = async (id: string) => {
+    return await axios
+      .delete(`${BaseUrl}${AllGroups}/${id}`, {
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        if (res.data.error) {
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_ERROR_TEXT, payload: res.data.error })
+          dispatch({ type: HAS_ERROR, payload: true })
+          return true
+        }
+        if (res.data.message) {
+          dispatch({ type: HAS_ERROR, payload: false })
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_SUCCESS_TEXT, payload: res.data.message })
+        }
+      })
+      .catch((err) => {
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({ type: HAS_ERROR, payload: true })
+        dispatch({
+          type: FLASH_ERROR_TEXT,
+          payload: err.response.data.message,
+        })
+      })
+  }
+
+  const saveContact = async (contact: ContactType) => {
+    return await axios
+      .post(`${BaseUrl}${saveContactPath}`, {
+        contact: contact,
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        if (res.data.error) {
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_ERROR_TEXT, payload: res.data.error })
+          dispatch({ type: HAS_ERROR, payload: true })
+          return 'error'
+        }
+        if (res.data.message) {
+          dispatch({ type: HAS_ERROR, payload: false })
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_SUCCESS_TEXT, payload: res.data.message })
+
+          return 'good'
+        }
+        getAllGroups().then((data) => {
+          if (!data) return
+          dispatch({ type: GROUPS, payload: data })
+        })
+        getAllContacts().then((data) => {
+          if (!data) return
+          dispatch({ type: CONTACTS, payload: data })
+        })
+      })
+
+      .catch((err) => {
+        dispatch({ type: HAS_ERROR, payload: true })
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({
+          type: FLASH_ERROR_TEXT,
+          payload: err.response.data.message,
+        })
+      })
+  }
+  const getAllContacts = async () => {
+    return await axios
+      .get(`${BaseUrl}${allContacts}`, {
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        const data = res.data as {
+          firstName: string
+          lastName: string
+          companyName: string
+          positionInCompany: string
+          email: string
+          phoneMobile: string
+          phoneHome: string
+          group: string
+          groupName: string
+        }
+        if (data) {
+          return data
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  const deleteContactTrash = async (
+    id: string,
+    oldGroup: string,
+    newGroup: string
+  ) => {
+    return await axios
+      .put(`${BaseUrl}${deleteContact}${id}`, {
+        id: id,
+        oldGroup: oldGroup,
+        newGroup: newGroup,
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        if (res.data.error) {
+          dispatch({ type: IS_VISIBLE, payload: true })
+          dispatch({ type: FLASH_ERROR_TEXT, payload: res.data.error })
+          dispatch({ type: HAS_ERROR, payload: true })
+          dispatch({
+            type: INPUT_ERROR_GROUP,
+            payload: res.data.error,
+          })
+          return true
+        }
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({ type: HAS_ERROR, payload: false })
+        dispatch({ type: FLASH_SUCCESS_TEXT, payload: res.data.message })
+
+        getAllGroups().then((data) => {
+          if (!data) return
+          dispatch({ type: GROUPS, payload: data })
+        })
+        getAllContacts().then((data) => {
+          if (!data) return
+          dispatch({ type: CONTACTS, payload: data })
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+        dispatch({ type: HAS_ERROR, payload: true })
+        dispatch({ type: IS_VISIBLE, payload: true })
+        dispatch({
+          type: INPUT_ERROR_GROUP,
+          payload: err.response.data.message,
+        })
+      })
+  }
+
+  const getAllContactsFromTrash = async () => {
+    return await axios
+      .get(`${BaseUrl}${AllContactsTrash}`, {
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        const data = res.data as {
+          firstName: string
+          lastName: string
+          companyName: string
+          positionInCompany: string
+          email: string
+          phoneMobile: string
+          phoneHome: string
+          group: string
+          groupName: string
+        }
+        if (data) {
+          return data
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  const getPreviewContact = async (id: number) => {
+    return await axios
+      .post(`${BaseUrl}/preview-contact`, {
+        id: id,
+        headers: {
+          Authorization: getToken,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        console.log(res.data)
+        const data = res.data as {
+          firstName: string
+          lastName: string
+          companyName: string
+          positionInCompany: string
+          email: string
+          phoneMobile: string
+          phoneHome: string
+          group: string
+          groupName: string
+        }
+        if (data) {
+          return data
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  return {
+    checkConnectToServer,
+    login,
+    GetkUserFromServ,
+    createGroupFetch,
+    getAllGroups,
+    deleteGroupFromServer,
+    editGroupFetch,
+    saveContact,
+    getAllContacts,
+    deleteContactTrash,
+    getAllContactsFromTrash,
+    getPreviewContact,
+  }
 }

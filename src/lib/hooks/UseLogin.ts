@@ -12,11 +12,9 @@ export type EnumInputError = {
 
 export const useLogin = () => {
   const T = PL_pl
-  const login = useSelector((state: RootState) => state.login)
+  const { user, password } = useSelector((state: RootState) => state.login)
 
   const dispatch = useDispatch()
-
-  const { user, password } = login
 
   const InputError = {
     emptyText: '',
