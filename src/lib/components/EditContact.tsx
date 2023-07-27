@@ -1,50 +1,79 @@
 import { Images } from 'assets'
-import { HamburgerMenu } from 'lib/components'
-import { RoutePath } from 'lib/config'
+import { HamburgerMenu } from 'lib/components/HamburgerMenu'
 import { useFetch } from 'lib/hooks'
 import { RootState } from 'lib/reducers'
 import { ContactType, GroupReducerTypes, HomeReducerTypes } from 'lib/types'
+import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import styled from 'styled-components'
-
 type InputProps = { hasError?: boolean }
-
-export const CreateContact = () => {
-  const { GET_NAME_SELECTED, CLICKED_GROUP } = GroupReducerTypes
-
-  const { SHOW_HEADER,  } = HomeReducerTypes
-  const { groups, hasError } = useSelector((state: RootState) => state.side)
-  const { HAS_ERROR } = GroupReducerTypes
-  const { saveContact, createGroupFetch } = useFetch()
+export const EditContact = () => {
+  const { PREVIEW_CONTACT } = HomeReducerTypes
+  const { previewContact } = useSelector((state: RootState) => state.home)
+  const { getPreviewContact } = useFetch()
   const dispatch = useDispatch()
+  const { HAS_ERROR } = GroupReducerTypes
 
-  const { adressBookRoute } = RoutePath
-
-  dispatch({ type: CLICKED_GROUP, payload: 'Utwórz Kontakt' })
-  dispatch({ type: GET_NAME_SELECTED, payload: 'Utwórz Kontakt' })
-  dispatch({ type: SHOW_HEADER, payload: false })
-
-  const [newContact, setNewContact] = useState<ContactType>()
+  const { SHOW_HEADER } = HomeReducerTypes
+  const { groups, hasError } = useSelector((state: RootState) => state.side)
+  const { createGroupFetch, editContactFetch } = useFetch()
   const saveButtonRef = useRef<HTMLButtonElement>(null)
 
-  const groupsAll = groups.map((item) => (
-    <>
-      <OptionGroup value={item.name} key={item.id} id={`${item.id}`}>
-        {item.name}
-      </OptionGroup>
-    </>
-  ))
-
+  const [editContact, setEditContact] = useState<ContactType>()
   useEffect(() => {
-    if (newContact) {
-      saveContact(newContact).then((e) => {
-        e === 'good' ? (location.pathname = adressBookRoute) : null
+    if (editContact) {
+      const lastPreview = sessionStorage.getItem('previewID')
+      if (!lastPreview) return
+
+      editContactFetch(editContact, lastPreview).then((e) => {
+        const newPathname = location.pathname.replace('/edit', '')
+
+        e === 'good' ? (location.pathname = newPathname) : null
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newContact])
+  }, [editContact])
+  useEffect(() => {
+    dispatch({ type: SHOW_HEADER, payload: false })
+    const lastPreview = sessionStorage.getItem('previewID')
+    if (!lastPreview) return
+
+    getPreviewContact(lastPreview).then((data) => {
+      if (!data) return
+
+      dispatch({
+        type: PREVIEW_CONTACT,
+        payload: data,
+      })
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const {
+    firstName,
+    lastName,
+    companyName,
+    positionInCompany,
+    email,
+    phoneMobile,
+    phoneHome,
+    groupName,
+  } = previewContact
+
+  const [selectedGroup, setSelectedGroup] = useState(groupName)
+  const groups2 = groups.map((item) => (
+    <React.Fragment key={item.id}>
+      <OptionGroup
+        selected={groupName === item.name}
+        value={item.name}
+        key={item.id}
+        id={`${item.id}`}
+      >
+        {item.name}
+      </OptionGroup>
+    </React.Fragment>
+  ))
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter') {
@@ -62,12 +91,12 @@ export const CreateContact = () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
   }, [])
-
   return (
     <>
       <Container>
         <HamburgerMenu />
         <Separator />
+
         <CreateContactContainer>
           <CreateContactForm>
             <ContactName>
@@ -80,6 +109,7 @@ export const CreateContact = () => {
                   autoFocus
                   name='firstName'
                   required={true}
+                  defaultValue={firstName}
                   placeholder='Imię'
                   hasError={hasError}
                   onChange={(e: { target: { value: string } }) => {
@@ -100,6 +130,7 @@ export const CreateContact = () => {
                   type='text'
                   name='lastName'
                   placeholder='Nazwisko'
+                  defaultValue={lastName}
                 />
               </LastName>
             </ContactName>
@@ -108,7 +139,7 @@ export const CreateContact = () => {
               <InputName
                 name='companyName'
                 type='text'
-                defaultValue={'Piotruś Pan Sp. z o.o.'}
+                defaultValue={companyName}
                 min={1}
                 max={100}
                 placeholder='Firma'
@@ -116,6 +147,7 @@ export const CreateContact = () => {
               <Position>
                 <InputName
                   name='positionInCompany'
+                  defaultValue={positionInCompany}
                   type='text'
                   min={1}
                   max={100}
@@ -127,6 +159,7 @@ export const CreateContact = () => {
               <ImgName src={Images.emailIcon} />
               <InputName
                 name='email'
+                defaultValue={email}
                 type='email'
                 min={1}
                 max={100}
@@ -137,6 +170,7 @@ export const CreateContact = () => {
               <ImgName src={Images.callIcon} />
               <InputName
                 name='phoneMobile'
+                defaultValue={phoneMobile}
                 type='tel'
                 min={1}
                 max={100}
@@ -161,6 +195,7 @@ export const CreateContact = () => {
                 min={1}
                 max={100}
                 name='phoneHome'
+                defaultValue={phoneHome}
                 placeholder='Numer Telefonu Stacjonarny'
               />
             </ContactPhone>
@@ -168,14 +203,25 @@ export const CreateContact = () => {
           <SelectedGroup>
             <ChooseGroupTitle>
               Przydziel do grupy:
-              <ChooseGroup>
-                <ContactOption value={'Kontakty'} id='000000000000'>
-                  Kontakt
+              <ChooseGroup
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
+              >
+                <ContactOption
+                  selected={groupName === 'Kontakty'}
+                  value='Kontakty'
+                  id='000000000000'
+                >
+                  kontakt
                 </ContactOption>
-                <ContactOption value={'Wolne Numery'} id='222222222222'>
+                <ContactOption
+                  selected={groupName === 'Wolne Numery'}
+                  value='Wolne Numery'
+                  id='222222222222'
+                >
                   Wolne Numery
                 </ContactOption>
-                {groupsAll}
+                {groups2}
               </ChooseGroup>
             </ChooseGroupTitle>
             <ChooseNewGroupTitle>
@@ -208,7 +254,7 @@ export const CreateContact = () => {
                   if (name === 'createNewGroup' && value.length > 0) {
                     createGroupFetch(value)
 
-                    setNewContact((prevState) => ({
+                    setEditContact((prevState) => ({
                       ...prevState,
                       [name]: value,
                       group: value,
@@ -218,19 +264,13 @@ export const CreateContact = () => {
                     return
                   }
 
-                  setNewContact((prevState) => ({
+                  setEditContact((prevState) => ({
                     ...prevState,
                     [name]: value,
                     group: id,
                     groupName: groupName,
                   }))
                 })
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                const saveButton = e.target as HTMLElement
-                saveButton.click()
-              }
             }}
           >
             Zapisz
@@ -245,12 +285,10 @@ const Separator = styled.div`
   height: 1px;
   background-color: #adadad;
   margin: 20px auto;
-  @media (min-width: ${({ theme }) => theme.media.xs}px) {
-    margin: 0;
-  }
 `
 const Container = styled.div`
   position: relative;
+  overflow: scroll;
 `
 const CreateContactContainer = styled.div`
   margin-top: 50px;
@@ -290,7 +328,8 @@ const InputName = styled.input<InputProps>`
   position: relative;
 
   &:focus {
-    outline: none;
+    outline-color: #ffed00;
+    outline-width: 5px;
   }
   &::placeholder {
     color: #c1c1c1;
@@ -326,7 +365,7 @@ const SelectedGroup = styled.div`
 `
 const ChooseGroup = styled.select`
   width: 30px;
-  border: 1px solid #c1c1c1;
+  border: 1px solid #e8e8e8;
   height: 30px;
   width: max-content;
   padding: 5px;

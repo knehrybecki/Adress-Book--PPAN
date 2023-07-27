@@ -17,8 +17,8 @@ export type Contacts = {
   companyName: string
   positionInCompany: string
   email: string
-  phoneMobile: string
   phoneHome: string
+  phoneMobile: string
   id: string
   group: string
   groupName: string

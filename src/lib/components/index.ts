@@ -1,4 +1,7 @@
-export { PreviewContact } from './PreviewContact';
+export { HamburgerMenu } from './HamburgerMenu'
+
+export { EditContact } from './EditContact'
+export { PreviewContact } from './PreviewContact'
 export { AllContacts } from './AllContacts'
 export { CreateContact } from 'lib/components/CreateContact'
 
@@ -9,3 +12,4 @@ export { HomeContacts } from './HomeContacts'
 export { LoginHeader } from './LoginHeader'
 export { HomeHeader } from './HomeHeader'
 export { HomeSide } from './HomeSide'
+export { Popper } from './Popper'

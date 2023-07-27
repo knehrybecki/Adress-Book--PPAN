@@ -4,6 +4,10 @@ export const PL_pl: Dictionary = {
   welcome: {
     title: 'Książka Adresowa',
   },
+  errorPage: {
+    title: 'Page not Found!',
+    link: 'Home Page',
+  },
   loginPage: {
     HeaderTitle: 'Książka Adresowa',
     title: 'Logowanie',
@@ -28,7 +32,7 @@ export const PL_pl: Dictionary = {
       save: 'Zapisz',
       cancel: 'Anuluj',
       deleteGroupTitle: 'Czy na pewno chcesz usunąć grupę?',
-      deleteGroupText: 'W tej grupie jest ',
+      deleteGroupText: 'W tej grupie znajduje się ',
       delete: 'Usuń',
       editGroup: 'Edytuj Grupę',
       edit: 'Edytuj',
@@ -37,6 +41,26 @@ export const PL_pl: Dictionary = {
       success: 'Success',
       error: 'Error',
       close: 'Zamknij',
+    },
+    quickViewContact: {
+      delete: 'Usuń',
+    },
+    optionSelectedContacts: {
+      selected: 'Wybrane :',
+      all: 'Wszystkie',
+      nothing: 'Żaden',
+    },
+    headerTitleContacts: {
+      name: 'Nazwa',
+      email: 'Email',
+      phone: 'Numer Telefonu',
+      company: 'Stanowisko i Firma',
+      contact: 'Kontakty:',
+    },
+  },
+  createContact: {
+    defaultContactTitle: {
+      createContact: 'Utwórz Kontakt',
     },
   },
 }

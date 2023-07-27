@@ -1,7 +1,7 @@
 import { createAction, createReducer } from '@reduxjs/toolkit'
 import { Contacts } from 'lib/types'
 
-type Group = { id: string; name: string }
+type Group = { id: string; name: string; isContacts: number }
 
 export const INITIAL_STATE_SIDE = {
   selectedGroup: 'Kontakty',
@@ -19,7 +19,10 @@ export const INITIAL_STATE_SIDE = {
   groups: [] as Group[],
   contacts: [] as Contacts[],
   contactsTrash: [] as Contacts[],
+  contactsFreeNumbers: [] as Contacts[],
+  contactsFromGroups: [] as Contacts[],
   isVisible: false,
+  showBurgerMenu: true,
 }
 
 const nameSelected = createAction<string>('GET_NAME_SELECTED')
@@ -38,6 +41,9 @@ const isVisible = createAction<boolean>('IS_VISIBLE')
 const flashErrorText = createAction<string>('FLASH_ERROR_TEXT')
 const contacts = createAction<Contacts[]>('CONTACTS')
 const contactsTrash = createAction<Contacts[]>('CONTACTS_TRASH')
+const contactsFreeNumbers = createAction<Contacts[]>('CONTACTS_FREE_NUMBERS')
+const contactsFromGroups = createAction<Contacts[]>('CONTACTS_GROUPS')
+const showBurgerMenu = createAction<boolean>('SHOW_MENU')
 
 export const sideReducer = createReducer(INITIAL_STATE_SIDE, (builder) => {
   builder.addCase(nameSelected, (state, action) => {
@@ -85,9 +91,18 @@ export const sideReducer = createReducer(INITIAL_STATE_SIDE, (builder) => {
   })
   builder.addCase(isVisible, (state, action) => {
     state.isVisible = action.payload
-    console.log(action.payload)
   })
   builder.addCase(flashErrorText, (state, action) => {
     state.flashErrorText = action.payload
+  })
+  builder.addCase(contactsFreeNumbers, (state, action) => {
+    state.contactsFreeNumbers = action.payload
+  })
+  builder.addCase(contactsFromGroups, (state, action) => {
+    state.contactsFromGroups = action.payload
+  })
+
+  builder.addCase(showBurgerMenu, (state, action) => {
+    state.showBurgerMenu = action.payload
   })
 })

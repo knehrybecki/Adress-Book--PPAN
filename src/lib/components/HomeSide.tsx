@@ -5,8 +5,9 @@ type HomeSideProps = {
 }
 
 export const HomeSide = ({ children }: HomeSideProps) => {
+  const w = window.innerHeight
   return (
-    <Container>
+    <Container height={w}>
       <>{children}</>
     </Container>
   )
@@ -14,5 +15,6 @@ export const HomeSide = ({ children }: HomeSideProps) => {
 
 const Container = styled.div`
   display: flex;
-  height: 90vh;
+  height: ${({ height }) => `${height}px`};
+  overflow: auto;
 `

@@ -1,6 +1,0 @@
-const TopBatContacts = () => {
-
-    return(
-        
-    )
-}

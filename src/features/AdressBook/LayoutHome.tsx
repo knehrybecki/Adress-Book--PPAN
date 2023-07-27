@@ -2,6 +2,7 @@ import {
   HomeContacts,
   HomeHeader,
   HomeSide,
+  Popper,
   SideComponent,
 } from 'lib/components'
 
@@ -17,6 +18,7 @@ export const LayoutHome = () => {
           <Outlet />
         </HomeContacts>
       </HomeSide>
+      <Popper />
     </>
   )
 }

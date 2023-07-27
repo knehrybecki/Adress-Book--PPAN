@@ -1,10 +1,16 @@
-import { AllContacts } from 'lib/components'
 export const RoutePath = {
   home: '/',
   loginRoute: '/login',
   adressBookRoute: '/adress-book',
   createContactRoute: '/adress-book/create-contact',
   allGroups: '/groups',
+  contactPreview: '/adress-book/person/',
+  createContact: '/adress-book/create-contact',
+  trashRoute: '/adress-book/kosz',
+  idContact: '/adress-book/:id',
+  PreviewContact: '/adress-book/person/:id',
+  editContact: '/adress-book/person/:id/edit',
+  all: '*',
 }
 
 export const FetchPath = {
@@ -18,5 +24,10 @@ export const FetchPath = {
   saveContactPath: '/createContact',
   allContacts: '/contacts',
   AllContactsTrash: '/contacts/trash',
+  allContactsFreeNumbers: '/contacts/free-numbers',
+  allContactsGroups: '/contacts/groups',
   deleteContact: '/contact/delete/',
+  deleteContactMany: '/contact/deleteMany/',
+  editContact: '/contact/edit/',
+  groupChange: '/contact/edit/group/',
 }

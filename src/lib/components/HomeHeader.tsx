@@ -1,7 +1,8 @@
 import { Images } from 'assets'
 import { RootState } from 'lib/reducers'
 
-import { useSelector } from 'react-redux'
+
+import {  useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 enum altImg {
@@ -9,7 +10,9 @@ enum altImg {
 }
 
 export const HomeHeader = () => {
-  const { nameSelected } = useSelector((state: RootState) => state.side)
+  const { nameSelected,  } = useSelector(
+    (state: RootState) => state.side
+  )
 
   return (
     <Container>
@@ -34,14 +37,14 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   @media (max-width: ${({ theme }) => theme.media.sm}px) {
-    height: 150px;
+    height: 120px;
     flex-direction: column;
     justify-content: center;
   }
 `
 const Title = styled.h1`
   color: ${({ theme }) => theme.header.colorHeader};
-  font-weight: 500;
+  font-weight: bold;
   font-size: ${({ theme }) => theme.title.fontSize};
   text-align: center;
   position: absolute;

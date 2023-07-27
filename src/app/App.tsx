@@ -7,28 +7,40 @@ import { StartApp } from 'features/AdressBook/StartApp'
 import { RoutePath } from 'lib/config'
 import { PL_pl } from 'lib/locale'
 import { Welcome } from 'lib/components/Welcome'
-import { RootState } from 'lib/reducers'
-import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+
+import { useDispatch } from 'react-redux'
+import { useEffect, useRef } from 'react'
 import { useFetch } from 'lib/hooks'
 import { LoginTypes, SessionType } from 'lib/types'
 
-import { AllContacts, CreateContact, PreviewContact } from 'lib/components'
+import { AllContacts, CreateContact, EditContact } from 'lib/components'
 
 export const App = () => {
-  const { home, loginRoute, adressBookRoute } = RoutePath
+  const {
+    home,
+    loginRoute,
+    adressBookRoute,
+    PreviewContact,
+    all,
+    createContact,
+    idContact,
+    editContact,
+    trashRoute,
+  } = RoutePath
   const T = PL_pl
-  const { logged } = useSelector((state: RootState) => state.login)
 
-  const { GetkUserFromServ } = useFetch()
+  const { GetkUserFromServ, checkContactsInTrash } = useFetch()
   const dispatch = useDispatch()
   const { Unauthorized, LOGGED } = LoginTypes
   const { StatusServerSession, loggedSession } = SessionType
 
   const getStatusServer = sessionStorage.getItem(StatusServerSession)
-  const getLoggedUser = sessionStorage.getItem(loggedSession)
 
+  const wasCalled = useRef<boolean>(false)
   useEffect(() => {
+    if (wasCalled.current) return
+    wasCalled.current = true
+
     GetkUserFromServ()
       .then((res) => {
         if (!res) {
@@ -39,8 +51,8 @@ export const App = () => {
           sessionStorage.setItem(loggedSession, res)
           dispatch({ type: LOGGED, payload: res })
 
-          // if (location.pathname === adressBook) return
-          // location.pathname = adressBook
+          //   if (location.pathname === adressBookRoute) return
+          //   location.pathname = home
         }
       })
       .catch((err) => {
@@ -70,17 +82,26 @@ export const App = () => {
           }
         }
       })
+
+    if (!getStatusServer) {
+      if (location.pathname === home) {
+        return
+      }
+
+      location.pathname = home
+    }
+
+    checkContactsInTrash()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // useEffect(() => {
-
-  //   if (getLogged) {
-  //     dispatch({ type: 'SET_LOGGED', payload: getLogged })
-  //     if (location.pathname === '/AdressBook') return
-  //     location.pathname = '/AdressBook'
+  //   if (getLoggedUser) {
+  //     dispatch({ type: 'SET_LOGGED', payload: getLoggedUser })
+  //     if (location.pathname === adressBookRoute) return
+  //     location.pathname = adressBookRoute
   //   }
-  // }, [getStatusServer, getLogged, dispatch])
+  // }, [getStatusServer, getLoggedUser, dispatch])
 
   return (
     <ThemeProvider theme={theme}>
@@ -95,24 +116,14 @@ export const App = () => {
           </Route>
 
           <Route path={adressBookRoute} element={<LayoutHome />}>
-            {/* <Route index element={<AdressBook />} /> */}
-            <Route
-              path='/adress-book/create-contact'
-              element={<CreateContact />}
-            />
-            <Route path='/adress-book' element={<AllContacts />} />
-            <Route path='/adress-book/kosz' element={<AllContacts />} />
-            <Route path='/adress-book/:id' element={<AllContacts />} />
-            <Route
-              path='/adress-book/person/:id'
-              element={<PreviewContact />}
-            />
+            <Route path={createContact} element={<CreateContact />} />
+            <Route path={adressBookRoute} element={<AllContacts />} />
+            <Route path={trashRoute} element={<AllContacts />} />
+            <Route path={idContact} element={<AllContacts />} />
+            <Route path={PreviewContact} element={<PreviewContact />} />
+            <Route path={editContact} element={<EditContact />} />
           </Route>
-          {/* <Route path='/AdressBook/kosz' element={<LayoutHome />}> */}
-
-          {/* </Route> */}
-
-          <Route path='*' element={<ErrorPage />} />
+          <Route path={all} element={<ErrorPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

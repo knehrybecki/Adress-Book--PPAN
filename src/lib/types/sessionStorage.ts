@@ -1,5 +1,5 @@
 export enum SessionType {
-  StatusServerSession = 'statusServer',
+  StatusServerSession = 'StatusServer',
   tokenSession = 'logged',
-  loggedSession = 'logedUser',
+  loggedSession = 'loggedUser',
 }

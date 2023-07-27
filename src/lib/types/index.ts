@@ -1,5 +1,5 @@
 export type { ContactType } from './contact'
-export { HomeReducerTypes } from './home'
+export { HomeReducerTypes, selectedGroupText, idDefaulValue } from './home'
 export { FetchTypes } from 'lib/types/actions'
 export { LoginTypes } from './login'
 export type { FetchLogin } from './login'

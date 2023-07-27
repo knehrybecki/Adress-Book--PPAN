@@ -35,7 +35,7 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
       checkConnectToServer().then((data) => {
         if (statusDBTS in data && statusServerTS in data) {
           const { statusDB, statusServer } = data
-
+          console.log(data)
           dispatch({
             type: SET_STATUS_SERVER,
             payload: {
@@ -69,12 +69,14 @@ export const Welcome: React.FunctionComponent<WelcomeProps> = ({ T }) => {
     if (statusServer === Bad) {
       dispatch({ type: SERVER_ERROR })
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusServer, statusDB])
 
   const reconnect = () => {
     const reconnect = setInterval(() => {
       checkConnectToServer().then((data) => {
+        console.log(data)
         if (statusDBTS in data && statusServerTS in data) {
           const { statusDB, statusServer } = data
 

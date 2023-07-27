@@ -1,35 +1,40 @@
 import { Images } from 'assets'
+import { HamburgerMenu } from 'lib/components/HamburgerMenu'
 import { useFetch } from 'lib/hooks'
 import { RootState } from 'lib/reducers'
 import { HomeReducerTypes } from 'lib/types'
-import { useEffect,  } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router'
 import styled from 'styled-components'
 
-
 export const PreviewContact = () => {
+  const { PREVIEW_CONTACT, SHOW_HEADER } = HomeReducerTypes
+
   const { previewContact } = useSelector((state: RootState) => state.home)
   const { getPreviewContact } = useFetch()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const { PREVIEW_CONTACT } = HomeReducerTypes
+  const wasCalled = useRef<boolean>(false)
   if (previewContact.id) {
     sessionStorage.setItem('previewID', previewContact.id)
   }
   useEffect(() => {
+    dispatch({ type: SHOW_HEADER, payload: false })
     const lastPreview = sessionStorage.getItem('previewID')
     if (!lastPreview) return
+    if (wasCalled.current) return
+    wasCalled.current = true
 
-    const parsedLastPreview = parseInt(lastPreview, 10)
-    getPreviewContact(parsedLastPreview).then((data) => {
+    getPreviewContact(lastPreview).then((data) => {
       if (!data) return
-      console.log('data', data)
       dispatch({
         type: PREVIEW_CONTACT,
         payload: data,
       })
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
@@ -42,9 +47,11 @@ export const PreviewContact = () => {
     phoneHome,
     groupName,
   } = previewContact
+
   return (
     <Container>
       <TopInformation>
+        <HamburgerMenu />
         <DataContact>
           <Name>
             {firstName} {lastName}
@@ -56,7 +63,11 @@ export const PreviewContact = () => {
           </Company>
           <Group>{groupName}</Group>
         </DataContact>
-        <EditInformation>
+        <EditInformation
+          onClick={() => {
+            navigate('edit')
+          }}
+        >
           <ButtonEdit>Edytuj</ButtonEdit>
         </EditInformation>
       </TopInformation>
@@ -146,7 +157,7 @@ const BottomBoxInformation = styled.div`
   border: 1px solid #adadad;
   border-radius: 5px;
   max-width: 450px;
-  height: 150px;
+  height: 100%;
 `
 
 const Box = styled.div`
@@ -163,8 +174,7 @@ const OtherInformation = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
-  margin-top: 10px;
-  margin-left: 15px;
+  margin: 20px;
 `
 
 const Email = styled.div`

@@ -15,6 +15,8 @@ export enum GroupReducerTypes {
   FLASH_ERROR_TEXT = 'FLASH_ERROR_TEXT',
   CONTACTS = 'CONTACTS',
   CONTACTS_TRASH = 'CONTACTS_TRASH',
+  CONTACTS_FREE_NUMBERS = 'CONTACTS_FREE_NUMBERS',
+  CONTACTS_GROUPS = 'CONTACTS_GROUPS',
 }
 export enum GroupReducerPayload {
   stringEmpty = '',

@@ -1,8 +1,10 @@
-import { EditGroup } from 'assets/svg/'
-import { SideComponent } from 'lib/components'
 export type Dictionary = {
   welcome: {
     title: string
+  }
+  errorPage: {
+    title: string
+    link: string
   }
   loginPage: {
     HeaderTitle: string
@@ -37,6 +39,26 @@ export type Dictionary = {
       success: string
       error: string
       close: string
+    }
+    quickViewContact: {
+      delete: string
+    }
+    optionSelectedContacts: {
+      selected: string
+      all: string
+      nothing: string
+    }
+    headerTitleContacts: {
+      name: string
+      email: string
+      phone: string
+      company: string
+      contact: string
+    }
+  }
+  createContact: {
+    defaultContactTitle: {
+      createContact: string
     }
   }
 }
